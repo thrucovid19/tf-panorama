@@ -1,6 +1,6 @@
 # Local .terraform directories
 **/.terraform/*
-
+**/example/*
 # .tfstate files
 *.tfstate
 *.tfstate.*

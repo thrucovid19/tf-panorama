@@ -138,7 +138,7 @@ resource "aws_route_table_association" "igw_primary" {
 resource "aws_network_interface" "primary" {
   subnet_id         = aws_subnet.primary.id
   private_ips       = [cidrhost(aws_subnet.primary.cidr_block, 4)]
-  security_groups   = aws_security_group.management.id
+  security_groups   = [aws_security_group.management.id]
   source_dest_check = true
 
   tags = merge(
@@ -162,7 +162,7 @@ resource "aws_eip" "primary" {
   )
 
   depends_on = [
-    aws_instance.panorama,
+    aws_instance.primary,
   ]
 }
 
@@ -193,7 +193,7 @@ resource "aws_instance" "primary" {
   ebs_optimized = true
   ami           = data.aws_ami.ubuntu-linux.image_id
   instance_type = var.instance_type
-  key_name      = var.aws_key
+  key_name      = var.key_name
 
   monitoring = false
 
@@ -242,7 +242,7 @@ resource "aws_network_interface" "secondary" {
   subnet_id = aws_subnet.secondary[0].id
 
   private_ips       = [cidrhost(aws_subnet.secondary[0].cidr_block, 4)]
-  security_groups   = [var.security_group]
+  security_groups   = [aws_security_group.management.id]
   source_dest_check = true
 
   tags = merge(
@@ -273,9 +273,9 @@ resource "aws_instance" "secondary" {
   instance_initiated_shutdown_behavior = "stop"
 
   ebs_optimized = true
-  ami           = data.aws_ami.ubuntu-linux_id
+  ami           = data.aws_ami.ubuntu-linux.image_id
   instance_type = var.instance_type
-  key_name      = var.aws_key
+  key_name      = var.key_name
 
   monitoring = false
 
